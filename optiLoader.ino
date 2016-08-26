@@ -49,6 +49,7 @@
 //     connect the target power to a stronger source of +5V.  Do not use pin
 //     9 to power more complex Arduino boards that draw more than 40mA, such
 //     as the Arduino Uno Ethernet !
+// -- SEE BKIBBY NOTE BELOW
 //
 // If the aim is to reprogram the bootloader in one Arduino using another
 // Arudino as the programmer, you can just use jumpers between the connectors
@@ -60,6 +61,15 @@
 // +5V to +5V and GND to GND.  Only the "programmer" board should be powered
 //     by USB or external power.
 //
+// ----------------------------------------------------------------------
+
+// ----------------------------------------------------------------------
+//  March 2015 by Bill Kibby
+//  Made dedicated Optiloader board with a ZIF socket, moved Pin 9 of the programming chip to switch on a transistor
+//  to enable supplying a little more current.  This now powers the target chip as well as a status LED indicating it's
+//  receiving power.
+//
+//  Also added a bicolor LED to indicate success/fail of the programmed IC.
 // ----------------------------------------------------------------------
 
 // The following credits are from AVRISP.  It turns out that there isn't
@@ -98,6 +108,9 @@ char Arduino_preprocessor_hint;
 // STK Definitions; we can still use these as return codes
 #define STK_OK 0x10
 #define STK_FAILED 0x11
+
+#define LED_GOOD A1;
+#define LED_BAD A0;
 
 
 // Useful message printing definitions
@@ -146,9 +159,14 @@ void setup (void) {
   Serial.begin(19200); 			/* Initialize serial for status msgs */
   pinMode(13, OUTPUT); 			/* Blink the pin13 LED a few times */
   pulse(13,20);
+  
+  pinMode(LED_BAD, OUTPUT);  // RED STATUS LED
+  pinMode(LED_GOOD, OUTPUT);  // GREEN STATUS LED
 }
 
 void loop (void) {
+  digitalWrite(LED_GOOD, LOW)
+  digitalWrite(LED_BAD, LOW)
   fp("\nOptiLoader Bootstrap programmer.\n2011 by Bill Westfield (WestfW)\n\n");
   if (target_poweron()) {		/* Turn on target power */
     do {
@@ -161,10 +179,12 @@ void loop (void) {
       if (!target_program()) 		/* Program the image */
         break;
       (void) target_normfuses(); 	/* reset fuses to normal mode */
+      digitalWrite(LED_GOOD, HIGH)
     } 
     while (0);
   } 
   else {
+    digitalWrite(LED_BAD, HIGH)
     Serial.println();
   }
   target_poweroff(); 			/* turn power off */
