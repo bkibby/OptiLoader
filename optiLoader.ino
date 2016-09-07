@@ -109,8 +109,8 @@ char Arduino_preprocessor_hint;
 #define STK_OK 0x10
 #define STK_FAILED 0x11
 
-#define LED_GOOD A1;
-#define LED_BAD A0;
+#define LED_GOOD A1
+#define LED_BAD A0
 
 
 // Useful message printing definitions
@@ -165,8 +165,8 @@ void setup (void) {
 }
 
 void loop (void) {
-  digitalWrite(LED_GOOD, LOW)
-  digitalWrite(LED_BAD, LOW)
+  digitalWrite(LED_GOOD, LOW);
+  digitalWrite(LED_BAD, LOW);
   fp("\nOptiLoader Bootstrap programmer.\n2011 by Bill Westfield (WestfW)\n\n");
   if (target_poweron()) {		/* Turn on target power */
     do {
@@ -179,17 +179,17 @@ void loop (void) {
       if (!target_program()) 		/* Program the image */
         break;
       (void) target_normfuses(); 	/* reset fuses to normal mode */
-      digitalWrite(LED_GOOD, HIGH)
+      digitalWrite(LED_GOOD, HIGH);
     } 
     while (0);
   } 
   else {
-    digitalWrite(LED_BAD, HIGH)
+    digitalWrite(LED_BAD, HIGH);
     Serial.println();
   }
   target_poweroff(); 			/* turn power off */
 
-  fp ("\nType 'G' or hit RESET for next chip\n")
+  fp ("\nType 'G' or hit RESET for next chip\n");
     while (1) {
       if (Serial.read() == 'G')
         break;
